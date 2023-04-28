@@ -1,0 +1,33 @@
+From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
+From: TheKit <thekit@disroot.org>
+Date: Fri, 28 Apr 2023 00:13:09 +0000
+Subject: [PATCH] (halium) libstagefright: do not wait for package_native
+ service
+
+That service is not running in Halium and connectFormatShaper
+uses it to determine whether it's running on a handheld device,
+which is likely going to be always for true for us.
+
+Change-Id: I61bb149c3a29617c7597ffaeba4f1f21f7ed6d0f
+---
+ media/libstagefright/MediaCodec.cpp | 3 +++
+ 1 file changed, 3 insertions(+)
+
+diff --git a/media/libstagefright/MediaCodec.cpp b/media/libstagefright/MediaCodec.cpp
+index f1221a78d..1d8dd1ad7 100644
+--- a/media/libstagefright/MediaCodec.cpp
++++ b/media/libstagefright/MediaCodec.cpp
+@@ -1820,10 +1820,13 @@ static bool connectFormatShaper() {
+         sIsHandheld = true;
+         sp<IServiceManager> serviceMgr = defaultServiceManager();
+         sp<content::pm::IPackageManagerNative> packageMgr;
++        // Halium: the assumption above is fine for us, don't try to get package_native service
++        /*
+         if (serviceMgr.get() != nullptr) {
+             sp<IBinder> binder = serviceMgr->waitForService(String16("package_native"));
+             packageMgr = interface_cast<content::pm::IPackageManagerNative>(binder);
+         }
++        */
+         // if we didn't get serviceMgr, we'll leave packageMgr as default null
+         if (packageMgr != nullptr) {
+ 
