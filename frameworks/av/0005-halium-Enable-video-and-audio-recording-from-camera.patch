@@ -7,13 +7,13 @@ Signed-off-by: Ondrej Kubik <ondrej.kubik@canonical.com>
 
 Change-Id: I9f0c80bf75c0ee713d27fe4460e409cef51cd4c2
 ---
- media/libaudioclient/AudioRecord.cpp          | 28 +++++++++++++------
- .../libaudioclient/camera_record_service.cpp  | 21 +++++++++-----
- .../include/media/camera_record_service.h     | 12 ++++++--
- 3 files changed, 42 insertions(+), 19 deletions(-)
+ media/libaudioclient/AudioRecord.cpp          | 27 +++++++++++++------
+ .../libaudioclient/camera_record_service.cpp  | 21 ++++++++++-----
+ .../include/media/camera_record_service.h     | 12 ++++++---
+ 3 files changed, 42 insertions(+), 18 deletions(-)
 
 diff --git a/media/libaudioclient/AudioRecord.cpp b/media/libaudioclient/AudioRecord.cpp
-index fb4197517..f613cef28 100644
+index fb4197517..847ec665d 100644
 --- a/media/libaudioclient/AudioRecord.cpp
 +++ b/media/libaudioclient/AudioRecord.cpp
 @@ -392,7 +392,7 @@ status_t AudioRecord::set(
@@ -34,16 +34,15 @@ index fb4197517..f613cef28 100644
      return status;
  }
  
-@@ -458,7 +460,7 @@ status_t AudioRecord::start(AudioSystem::sync_event_t event, audio_session_t tri
+@@ -458,6 +460,7 @@ status_t AudioRecord::start(AudioSystem::sync_event_t event, audio_session_t tri
      mActive = true;
  
      if (!(flags & CBLK_INVALID)) {
--        status = statusTFromBinderStatus(mAudioRecord->start(event, triggerSession));
 +        ALOGV("mAudioRecord->start()");
+         status = statusTFromBinderStatus(mAudioRecord->start(event, triggerSession));
          if (status == DEAD_OBJECT) {
              flags |= CBLK_INVALID;
-         }
-@@ -829,17 +831,25 @@ status_t AudioRecord::createRecord_l(const Modulo<uint32_t> &epoch)
+@@ -829,17 +832,25 @@ status_t AudioRecord::createRecord_l(const Modulo<uint32_t> &epoch)
          return status;
      }
  
